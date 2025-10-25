@@ -1,19 +1,19 @@
 #include "XSRSOperation.h"
 
-struct XSRSBase*	xBases;
-struct XSRSBase*	xBase;
+XSRSBase*	xBases;
+XSRSBase*	xBase;
 i32					xBaseCount = 0;
 
 void xsrsBasesInitialize()
 {
 	// 16-KB 
-	xBases = malloc(sizeof(struct XSRSBase) * 1024 * 16);
+	xBases = malloc(sizeof(XSRSBase) * 1024 * 16);
 	xBase = xBases;
 };
 
 void xsrsBaseCreate(char *baseName)
 {
-	struct XSRSBase xBaseNow = { .xTable = malloc(sizeof(struct XSRSTable) * 16 * 1024), .xName = baseName, .xTableCount = 0};
+	XSRSBase xBaseNow = { .xTable = malloc(sizeof(XSRSTable) * 16 * 1024), .xName = baseName, .xTableCount = 0};
 	xBases[xBaseCount++] = xBaseNow;
 	xBase++;
 }
@@ -30,7 +30,7 @@ u8* xsrsBaseList(u8 spilt)
 	} return buffer;
 }
 
-struct XSRSBase* xsrsBaseFind(u8* name)
+XSRSBase* xsrsBaseFind(u8* name)
 {
 	for (int i = 0; i < xBaseCount; i++) {
 		if (!strcmp(xBases[i].xName, name)) {
@@ -39,13 +39,15 @@ struct XSRSBase* xsrsBaseFind(u8* name)
 	} return NULL;
 }
 
-void xsrsTableCreate(struct XSRSBase* base, char* tableName)
+void xsrsTableCreate(XSRSBase* base, char* tableName)
 {
-	struct XSRSTable xTable = { .sTableName = tableName, .xColumn = NULL, .xLine = NULL };
+	XSRSTable xTable = { .sTableName = tableName, .xColumn = malloc(sizeof(XSRSColumn) * 256), 
+		.xLine = malloc(sizeof(XSRSRaw) * 1024 * 256), .xColumnMax = 256, 
+		.xLineMax = 1024, .xColumnCount = 0, .xLineCount = 0 };
 	base->xTable[base->xTableCount++] = xTable;
 }
 
-u8* xsrsTableList(struct XSRSBase* base, u8 spilt)
+u8* xsrsTableList(XSRSBase* base, u8 spilt)
 {
 	u8 buffer[4096] = ""; // Make a 4KiB Size Buffer
 	int len = 0;	// for adding spilt symbol
@@ -56,11 +58,39 @@ u8* xsrsTableList(struct XSRSBase* base, u8 spilt)
 	} return buffer;
 }
 
-struct XSRSTable* xsrsTableFind(struct XSRSBase* base, u8* name)
+XSRSTable* xsrsTableFind(XSRSBase* base, u8* name)
 {
 	for (int i = 0; i < base->xTableCount; i++) {
 		if (!strcmp(base->xTable[i].sTableName, name)) {
 			return base->xTable + i;
+		}
+	} return NULL;
+}
+
+void xsrsColumnCreate(XSRSTable* table, char* columnName, u8 type)
+{
+	XSRSColumn xColumn = { .sName = columnName, .eType = type };
+	table->xColumn[table->xColumnCount++] = xColumn;
+}
+
+u8* xsrsColumnList(XSRSTable* table, u8 spilt)
+{
+	u8 buffer[4096] = ""; // Make a 4KiB Size Buffer
+	int len = 0;	// for adding spilt symbol
+	for (int i = 0; i < table->xColumnCount; i++) {
+		strcat(buffer, table->xColumn[i].sName);
+		len = strlen(buffer);
+		buffer[len] = spilt;
+	} return buffer;
+}
+
+XSRSColumn* xsrsColumnFind(XSRSTable* table, u8* name)
+{
+	for (int i = 0; i < table->xColumnCount; i++) {
+		if (!strcmp(table->xColumn[i].sName, name)) {
+			XSRSColumn* xColumnFound = table->xColumn + i;
+			printf("founded %s %p\n", xColumnFound->sName, xColumnFound);
+			return xColumnFound;
 		}
 	} return NULL;
 }

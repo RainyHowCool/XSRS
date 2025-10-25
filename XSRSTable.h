@@ -10,9 +10,11 @@ union XSRSRaw
 	boolean bBoolean;
 };
 
+typedef union XSRSRaw XSRSRaw;
+
 enum XSRSDataType
 {
-	STRING = 128, INT, LONG, BOOLEAN
+	STRING, INT, LONG, BOOLEAN
 };
 
 struct XSRSColumn
@@ -21,12 +23,20 @@ struct XSRSColumn
 	u8	eType;
 };
 
+typedef struct XSRSColumn XSRSColumn;
+
 struct XSRSTable
 {
 	struct XSRSColumn*	xColumn;
+	i32					xColumnCount;
+	i32					xColumnMax;
 	union XSRSRaw**		xLine;
+	i32					xLineCount;
+	i32					xLineMax;
 	u8*					sTableName;
 };
+
+typedef struct XSRSTable XSRSTable;
 
 struct XSRSBase
 {
@@ -34,3 +44,5 @@ struct XSRSBase
 	i32					xTableCount;
 	u8*					xName;
 };
+
+typedef struct XSRSBase XSRSBase;

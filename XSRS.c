@@ -44,14 +44,21 @@ int main()
     xsrsBaseCreate("Base1");
     xsrsBaseCreate("Base2");
     puts(xsrsBaseList(' '));
-    struct XSRSBase* base = xsrsBaseFind("Base2");
+    XSRSBase* base = xsrsBaseFind("Base2");
     base->xName = "BaseTwo";
     puts(xsrsBaseList('#'));
     xsrsTableCreate(base, "Table1");
     xsrsTableCreate(base, "Table2");
     puts(xsrsTableList(base, ' '));
-    struct XSRSTable* table = xsrsTableFind(base, "Table2");
+    XSRSTable* table = xsrsTableFind(base, "Table2");
     table->sTableName = "TableTwo";
     puts(xsrsTableList(base, '#'));
+	xsrsColumnCreate(table, "Column1", INT);
+	xsrsColumnCreate(table, "Column2", STRING);
+	puts(xsrsColumnList(table, ' '));
+    // wtf
+	XSRSColumn* column = xsrsColumnFind(table, "Column2");
+	printf("Found Column: %s of Type %d\n", column->sName, column->eType);
+	puts(xsrsColumnList(table, '#'));
 	return 0;
 }

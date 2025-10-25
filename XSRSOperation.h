@@ -8,3 +8,5 @@ struct XSRSBase* xsrsBaseFind(u8* name);
 void xsrsTableCreate(struct XSRSBase* base, char* tableName);
 u8* xsrsTableList(struct XSRSBase* base, u8 spilt);
 struct XSRSTable* xsrsTableFind(struct XSRSBase* base, u8* name);
+void xsrsColumnCreate(XSRSTable* table, char* columnName, u8 type);
+u8* xsrsColumnList(XSRSTable* table, u8 spilt);
