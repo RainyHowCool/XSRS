@@ -97,7 +97,7 @@ XSRSColumn* xsrsColumnFind(XSRSTable* table, u8* name)
 void xsrsLineAppend(XSRSTable* table, XSRSRaw* raw)
 {
 	if (table->xLineCount < table->xLineMax) {
-		for 
 		table->xLine[table->xLineCount++] = raw;
 	}
 }
+
