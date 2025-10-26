@@ -12,10 +12,17 @@ endif()
 project ("XSRS")
 
 # 将源代码添加到此项目的可执行文件。
-add_executable (XSRS "XSRS.c" "XSRS.h" "XSRSTable.h" "XSRSDataType.h" "XSRSOperation.c" "XSRSOperation.h")
+add_executable (XSRS "XSRS.c" "XSRS.h" "XSRSTable.h" "XSRSDataType.h" "XSRSOperation.c" "XSRSOperation.h" "XSRSSocket.c" "XSRSSocket.h" "XSRSLexer.c" "XSRSLexer.h" "XSRSIO.c" "XSRSIO.h" "XSRSProductInfo.c" "XSRSProductInfo.h")
+
+add_executable (XSRSClient "XSRSClient.c" "XSRSProductInfo.c" "XSRSSocket.c" "XSRSIO.c")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET XSRS PROPERTY CXX_STANDARD 20)
+endif()
+
+if(WIN32)
+	target_link_libraries(XSRS ws2_32)
+	target_link_libraries(XSRSClient ws2_32)
 endif()
 
 # TODO: 如有需要，请添加测试并安装目标。

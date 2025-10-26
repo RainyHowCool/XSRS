@@ -18,5 +18,5 @@ typedef unsigned int u32;
 typedef size_t usize;
 typedef size_t ptr;
 typedef u8 boolean;
-#define True 1;
-#define False 0;
+#define True 1
+#define False 0

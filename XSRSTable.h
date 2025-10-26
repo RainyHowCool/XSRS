@@ -14,7 +14,7 @@ typedef union XSRSRaw XSRSRaw;
 
 enum XSRSDataType
 {
-	STRING, INT, LONG, BOOLEAN
+	DSTRING, DINT, DLONG, DBOOLEAN
 };
 
 struct XSRSColumn

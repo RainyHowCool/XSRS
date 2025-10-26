@@ -2,44 +2,10 @@
 //
 
 #include "XSRS.h"
-#include "XSRSOperation.h"
-
-static void xsrsLogoShow()
-{
-    static char sRawLogo[] = "                                  _____                    _____                    _____          \n"
-        "        ______                   /\\    \\                  /\\    \\                  /\\    \\         \n"
-        "       |::|   |                 /::\\    \\                /::\\    \\                /::\\    \\        \n"
-        "       |::|   |                /::::\\    \\              /::::\\    \\              /::::\\    \\       \n"
-        "       |::|   |               /::::::\\    \\            /::::::\\    \\            /::::::\\    \\      \n"
-        "       |::|   |              /:::/\\:::\\    \\          /:::/\\:::\\    \\          /:::/\\:::\\    \\     \n"
-        "       |::|   |             /:::/__\\:::\\    \\        /:::/__\\:::\\    \\        /:::/__\\:::\\    \\    \n"
-        "       |::|   |             \\:::\\   \\:::\\    \\      /::::\\   \\:::\\    \\       \\:::\\   \\:::\\    \\   \n"
-        "       |::|   |           ___\\:::\\   \\:::\\    \\    /::::::\\   \\:::\\    \\    ___\\:::\\   \\:::\\    \\  \n"
-        " ______|::|___|___ ____  /\\   \\:::\\   \\:::\\    \\  /:::/\\:::\\   \\:::\\____\\  /\\   \\:::\\   \\:::\\    \\ \n"
-        "|:::::::::::::::::|    |/::\\   \\:::\\   \\:::\\____\\/:::/  \\:::\\   \\:::|    |/::\\   \\:::\\   \\:::\\____\\\n"
-        "|:::::::::::::::::|____|\\:::\\   \\:::\\   \\::/    /\\::/   |::::\\  /:::|____|\\:::\\   \\:::\\   \\::/    /\n"
-        " ~~~~~~|::|~~~|~~~       \\:::\\   \\:::\\   \\/____/  \\/____|:::::\\/:::/    /  \\:::\\   \\:::\\   \\/____/ \n"
-        "       |::|   |           \\:::\\   \\:::\\    \\            |:::::::::/    /    \\:::\\   \\:::\\    \\     \n"
-        "       |::|   |            \\:::\\   \\:::\\____\\           |::|\\::::/    /      \\:::\\   \\:::\\____\\    \n"
-        "       |::|   |             \\:::\\  /:::/    /           |::| \\::/____/        \\:::\\  /:::/    /    \n"
-        "       |::|   |              \\:::\\/:::/    /            |::|  ~|               \\:::\\/:::/    /     \n"
-        "       |::|   |               \\::::::/    /             |::|   |                \\::::::/    /      \n"
-        "       |::|   |                \\::::/    /              \\::|   |                 \\::::/    /       \n"
-        "       |::|___|                 \\::/    /                \\:|   |                  \\::/    /        \n"
-        "        ~~                       \\/____/                  \\|___|                   \\/____/         ";
-
-    static char sPromptInfo[] = "XSRS Store-RAM System Alpha 1\n"
-        "Build Time: %s %s\n"
-        "Running in %s (%s %d)\n"
-        "2025 xiaokuai_awa\n";
-                                                                                       
-    puts(sRawLogo);
-    printf(sPromptInfo, __DATE__, __TIME__, PLATFORM, COMPILER, COMPILER_VERSION);
-}
 
 int main()
 {
-	xsrsLogoShow();
+	xsrsLogoShow("Server");
     xsrsBasesInitialize();
     xsrsBaseCreate("Base1");
     xsrsBaseCreate("Base2");
@@ -53,8 +19,8 @@ int main()
     XSRSTable* table = xsrsTableFind(base, "Table2");
     table->sTableName = "TableTwo";
     puts(xsrsTableList(base, '#'));
-	xsrsColumnCreate(table, "Column1", INT);
-	xsrsColumnCreate(table, "Column2", STRING);
+	xsrsColumnCreate(table, "Column1", DINT);
+	xsrsColumnCreate(table, "Column2", DSTRING);
 	puts(xsrsColumnList(table, ' '));
     // wtf
 	XSRSColumn* column = xsrsColumnFind(table, "Column2");
@@ -65,6 +31,16 @@ int main()
         {.sStr = "Hello, XSRS!"}
 	};
 	xsrsLineAppend(table, raws);
+    XSRSRaw raws1[] = {
+        {.iInt = 42},
+        {.sStr = "XSRS这一块!"}
+    };
+    xsrsLineAppend(table, raws1);
 	xsrsLineRead(table, 0);
+	//xsrsSyncBaseToDisk(base);
+
+	xsrsSocketInitialize();
+    xsrsSocketCreateAndBind(11451);
+	xsrsSocketListen();
 	return 0;
 }
