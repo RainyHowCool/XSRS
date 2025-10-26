@@ -35,5 +35,5 @@
 int xsrsSocketInitialize();
 int xsrsSocketCleanup();
 SOCKET* xsrsSocketCreateAndBind(int port);
-SOCKET* xsrsClientSocketCreateAndConnect(char* host, int port);
+SOCKET xsrsClientSocketCreateAndConnect(char* host, int port);
 void xsrsSocketListen();

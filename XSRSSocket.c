@@ -55,7 +55,7 @@ SOCKET* xsrsSocketCreateAndBind(int port)
 	return &socketServer;
 }
 
-SOCKET* xsrsClientSocketCreateAndConnect(char *host, int port)
+SOCKET xsrsClientSocketCreateAndConnect(char *host, int port)
 {
 	// Create socket
 	SOCKET clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -70,7 +70,7 @@ SOCKET* xsrsClientSocketCreateAndConnect(char *host, int port)
 #endif
 	// Connect to server
 	connect(clientSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
-	return &clientSocket;
+	return clientSocket;
 }
 
 static void xsrsSocketHandle(SOCKET clientSocket)

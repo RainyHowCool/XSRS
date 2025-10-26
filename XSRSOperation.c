@@ -1,9 +1,9 @@
+// XSRSOperation.c
 #include "XSRSOperation.h"
-
 #define _CRT_SECURE_NO_WARNINGS
 
-XSRSBase*	xBases;
-XSRSBase*	xBase;
+XSRSBase* xBases;
+XSRSBase* xBase;
 i32			xBaseCount = 0;
 
 void xsrsBasesInitialize()
@@ -13,9 +13,9 @@ void xsrsBasesInitialize()
 	xBase = xBases;
 };
 
-void xsrsBaseCreate(char *baseName)
+void xsrsBaseCreate(char* baseName)
 {
-	XSRSBase xBaseNow = { .xTable = malloc(sizeof(XSRSTable) * 16 * 1024), .xName = baseName, .xTableCount = 0};
+	XSRSBase xBaseNow = { .xTable = malloc(sizeof(XSRSTable) * 16 * 1024), .xName = baseName, .xTableCount = 0 };
 	xBases[xBaseCount++] = xBaseNow;
 	xBase++;
 }
@@ -23,14 +23,20 @@ void xsrsBaseCreate(char *baseName)
 
 u8* xsrsBaseList(u8 spilt)
 {
-	u8 buffer[4096] = { 0 }; // Make a 4KiB Size Buffer
+	static u8 buffer[4096];
 	memset(buffer, 0, sizeof(buffer));
-	int len = 0;	// for adding spilt symbol
-	for (int i = 0; i < xBaseCount; i++) {
-		strcat(buffer, xBases[i].xName);
-		len = strlen(buffer);
-		buffer[len] = spilt;
-	} return buffer;
+	size_t remaining = sizeof(buffer) - 1;
+	for (int i = 0; i < xBaseCount && remaining > 0; i++) {
+		size_t len = strlen(xBases[i].xName);
+		if (len >= remaining) break;
+		strncat(buffer, xBases[i].xName, remaining - 1);
+		remaining -= len;
+		if (remaining > 0) {
+			buffer[sizeof(buffer) - remaining - 1] = spilt;
+			remaining--;
+		}
+	}
+	return buffer;
 }
 
 XSRSBase* xsrsBaseFind(u8* name)
@@ -44,21 +50,28 @@ XSRSBase* xsrsBaseFind(u8* name)
 
 void xsrsTableCreate(XSRSBase* base, char* tableName)
 {
-	XSRSTable xTable = { .sTableName = tableName, .xColumn = malloc(sizeof(XSRSColumn) * 256), 
-		.xLine = malloc(sizeof(XSRSRaw) * 1024 * 256), .xColumnMax = 256, 
-		.xLineMax = 1024, .xColumnCount = 0, .xLineCount = 0 };
+	XSRSTable xTable = { .sTableName = tableName, .xColumn = malloc(sizeof(XSRSColumn) * 256),
+		.xLine = malloc(sizeof(XSRSRaw*) * 1024 * 256), .xColumnMax = 256,
+		.xLineMax = 1024 * 256, .xColumnCount = 0, .xLineCount = 0 };
 	base->xTable[base->xTableCount++] = xTable;
 }
 
 u8* xsrsTableList(XSRSBase* base, u8 spilt)
 {
-	u8 buffer[4096] = ""; // Make a 4KiB Size Buffer
-	int len = 0;	// for adding spilt symbol
-	for (int i = 0; i < base->xTableCount; i++) {
-		strcat(buffer, base->xTable[i].sTableName);
-		len = strlen(buffer);
-		buffer[len] = spilt;
-	} return buffer;
+	static u8 buffer[4096];
+	memset(buffer, 0, sizeof(buffer));
+	size_t remaining = sizeof(buffer) - 1;
+	for (int i = 0; i < base->xTableCount && remaining > 0; i++) {
+		size_t len = strlen(base->xTable[i].sTableName);
+		if (len >= remaining) break;
+		strncat(buffer, base->xTable[i].sTableName, remaining - 1);
+		remaining -= len;
+		if (remaining > 0) {
+			buffer[sizeof(buffer) - remaining - 1] = spilt;
+			remaining--;
+		}
+	}
+	return buffer;
 }
 
 XSRSTable* xsrsTableFind(XSRSBase* base, u8* name)
@@ -78,13 +91,20 @@ void xsrsColumnCreate(XSRSTable* table, char* columnName, u8 type)
 
 u8* xsrsColumnList(XSRSTable* table, u8 spilt)
 {
-	u8 buffer[4096] = ""; // Make a 4KiB Size Buffer
-	int len = 0;	// for adding spilt symbol
-	for (int i = 0; i < table->xColumnCount; i++) {
-		strcat(buffer, table->xColumn[i].sName);
-		len = strlen(buffer);
-		buffer[len] = spilt;
-	} return buffer;
+	static u8 buffer[4096];
+	memset(buffer, 0, sizeof(buffer));
+	size_t remaining = sizeof(buffer) - 1;
+	for (int i = 0; i < table->xColumnCount && remaining > 0; i++) {
+		size_t len = strlen(table->xColumn[i].sName);
+		if (len >= remaining) break;
+		strncat(buffer, table->xColumn[i].sName, remaining - 1);
+		remaining -= len;
+		if (remaining > 0) {
+			buffer[sizeof(buffer) - remaining - 1] = spilt;
+			remaining--;
+		}
+	}
+	return buffer;
 }
 
 XSRSColumn* xsrsColumnFind(XSRSTable* table, u8* name)
@@ -100,7 +120,9 @@ XSRSColumn* xsrsColumnFind(XSRSTable* table, u8* name)
 void xsrsLineAppend(XSRSTable* table, XSRSRaw* raw)
 {
 	if (table->xLineCount < table->xLineMax) {
-		table->xLine[table->xLineCount++] = raw;
+		XSRSRaw* newRaw = malloc(sizeof(XSRSRaw) * table->xColumnCount);
+		memcpy(newRaw, raw, sizeof(XSRSRaw) * table->xColumnCount);
+		table->xLine[table->xLineCount++] = newRaw;
 	}
 }
 
@@ -110,10 +132,10 @@ void xsrsLineRead(XSRSTable* table, i32 id)
 		XSRSColumn* column = &table->xColumn[i];
 		switch (column->eType) {
 		case DINT:
-			printf("%d\t", (table->xLine[id] + i)->iInt);
+			printf("%d\t", table->xLine[id][i].iInt);
 			break;
 		case DSTRING:
-			printf("%s\t", (table->xLine[id] + i)->sStr);
+			printf("%s\t", table->xLine[id][i].sStr);
 			break;
 		default:
 			break;
