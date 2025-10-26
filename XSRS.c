@@ -60,5 +60,11 @@ int main()
 	XSRSColumn* column = xsrsColumnFind(table, "Column2");
 	column->sName = "ColumnTwo";
 	puts(xsrsColumnList(table, '#'));
+    XSRSRaw raws[] = {
+        {.iInt = 42},
+        {.sStr = "Hello, XSRS!"}
+	};
+	xsrsLineAppend(table, raws);
+	xsrsLineRead(table, 0);
 	return 0;
 }

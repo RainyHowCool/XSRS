@@ -11,3 +11,5 @@ XSRSTable* xsrsTableFind(XSRSBase* base, u8* name);
 void xsrsColumnCreate(XSRSTable* table, char* columnName, u8 type);
 u8* xsrsColumnList(XSRSTable* table, u8 spilt);
 XSRSColumn* xsrsColumnFind(XSRSTable* table, u8* name);
+void xsrsLineAppend(XSRSTable* table, XSRSRaw* raw);
+void xsrsLineRead(XSRSTable* table, i32 id);

@@ -101,3 +101,19 @@ void xsrsLineAppend(XSRSTable* table, XSRSRaw* raw)
 	}
 }
 
+void xsrsLineRead(XSRSTable* table, i32 id)
+{
+	for (int i = 0; i < table->xColumnCount; i++) {
+		XSRSColumn* column = &table->xColumn[i];
+		switch (column->eType) {
+		case INT:
+			printf("%d\t", (table->xLine[id] + i)->iInt);
+			break;
+		case STRING:
+			printf("%s\t", (table->xLine[id] + i)->sStr);
+			break;
+		default:
+			break;
+		}
+	}
+}
