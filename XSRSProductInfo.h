@@ -2,6 +2,11 @@
 
 #include <stdio.h>
 
+#if defined(_WIN64) || defined(WIN64) || defined(_WIN64_) || defined(WIN32) || defined(_WIN32) || defined(_WIN32_)
+	#define WINDOWS
+#endif
+
+#pragma comment(lib, "ws2_32.lib")
 #if defined(_WIN64) || defined(WIN64) || defined(_WIN64_)
 	#define PLATFORM "64-Bit Windows"
 #elif defined(WIN32) || defined(_WIN32) || defined(_WIN32_)
@@ -40,4 +45,4 @@
 	#define COMPILER_VERSION 0
 #endif
 
-void xsrsLogoShow();
+void xsrsLogoShow(char *mode);

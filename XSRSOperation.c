@@ -23,7 +23,8 @@ void xsrsBaseCreate(char *baseName)
 
 u8* xsrsBaseList(u8 spilt)
 {
-	u8 buffer[4096] = ""; // Make a 4KiB Size Buffer
+	u8 buffer[4096] = { 0 }; // Make a 4KiB Size Buffer
+	memset(buffer, 0, sizeof(buffer));
 	int len = 0;	// for adding spilt symbol
 	for (int i = 0; i < xBaseCount; i++) {
 		strcat(buffer, xBases[i].xName);

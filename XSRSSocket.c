@@ -4,7 +4,8 @@ SOCKET socketServer;
 
 int xsrsSocketInitialize() 
 {
-	// Initialization code for XSRS Socket
+#ifdef WINDOWS
+	// Initialization code for XSRS Socket (Windows)
 	WSADATA wsaData;
 	int iResult;
 
@@ -13,6 +14,7 @@ int xsrsSocketInitialize()
 		fprintf(stderr, "WSAStartup failed: %d\n", iResult);
 		return iResult;
 	}
+#endif
 
 	return 0; // Success
 }
@@ -21,12 +23,14 @@ int xsrsSocketCleanup()
 {
 	// Cleanup code for XSRS Socket
 	closesocket(socketServer);
+#ifdef WINDOWS
 	int iResult;
 	if ((iResult = WSACleanup()) != 0) {
 		// Handle error
 		fprintf(stderr, "WSACleanup failed: %d\n", iResult);
 		return iResult;
 	}
+#endif
 	return 0; // Success
 }
 
@@ -36,9 +40,14 @@ SOCKET* xsrsSocketCreateAndBind(int port)
 
 	// SockAddr_in structure for binding
 	struct sockaddr_in serverAddr;
+	memset(&serverAddr, 0, sizeof(serverAddr));
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_port = htons(port);
+#ifdef WINDOWS
 	serverAddr.sin_addr.s_addr = INADDR_ANY;
+#else
+	serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+#endif
 
 	// Bind it
 	bind(socketServer, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
@@ -54,7 +63,11 @@ SOCKET* xsrsClientSocketCreateAndConnect(char *host, int port)
 	struct sockaddr_in serverAddr;
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_port = htons(port);
+#ifdef WINDOWS
 	serverAddr.sin_addr.s_addr = inet_addr(host);
+#else
+	inet_pton(AF_INET, host, &serverAddr.sin_addr);
+#endif
 	// Connect to server
 	connect(clientSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
 	return &clientSocket;

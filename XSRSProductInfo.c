@@ -1,6 +1,6 @@
 #include "XSRSProductInfo.h"
 
-void xsrsLogoShow(const char *mode)
+void xsrsLogoShow(char *mode)
 {
     static char sRawLogo[] = "                                  _____                    _____                    _____          \n"
         "        ______                   /\\    \\                  /\\    \\                  /\\    \\         \n"
