@@ -89,8 +89,15 @@ XSRSColumn* xsrsColumnFind(XSRSTable* table, u8* name)
 	for (int i = 0; i < table->xColumnCount; i++) {
 		if (!strcmp(table->xColumn[i].sName, name)) {
 			XSRSColumn* xColumnFound = table->xColumn + i;
-			printf("founded %s %p\n", xColumnFound->sName, xColumnFound);
 			return xColumnFound;
 		}
 	} return NULL;
+}
+
+void xsrsLineAppend(XSRSTable* table, XSRSRaw* raw)
+{
+	if (table->xLineCount < table->xLineMax) {
+		for 
+		table->xLine[table->xLineCount++] = raw;
+	}
 }

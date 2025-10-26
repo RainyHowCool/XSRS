@@ -58,7 +58,7 @@ int main()
 	puts(xsrsColumnList(table, ' '));
     // wtf
 	XSRSColumn* column = xsrsColumnFind(table, "Column2");
-	printf("Found Column: %s of Type %d\n", column->sName, column->eType);
+	column->sName = "ColumnTwo";
 	puts(xsrsColumnList(table, '#'));
 	return 0;
 }
