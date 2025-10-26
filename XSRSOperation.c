@@ -159,7 +159,7 @@ void xsrsSyncBaseToDisk(XSRSBase *base)
 		fputs(table.sTableName, fp);
 		fputc('\0', fp);
 		// Write Columns to disk
-		fputs(XSRS_COLUMN_LOAD, fp);
+		fputc(XSRS_COLUMN_LOAD, fp);
 		XSRSColumn* columns = table.xColumn;
 		for (int j = 0; j < table.xColumnCount; j++) {
 			fputs(columns[j].sName, fp);
